@@ -66,8 +66,14 @@ skynet.register_protocol {
 		local lua_data = skynet.call(handler_id,"lua","PARES_CG",protoid,msgdata)
 		if lua_data ~= nil then
 			if lua_data.service == ".agent" then
-				lua_data.protoid = 590
-				CMD["send_client"](lua_data)
+				local ret_data = {}
+				ret_data.protoid = 590
+				ret_data.account = "skynet"
+				ret_data.obj_id = 0
+				ret_data.x = -1
+				ret_data.y = -2147483648
+				ret_data.points = {10000,888888,99999,1000000,777777777,2147483647}
+				CMD["send_client"](ret_data)
 			-- elseif then
 			-- else
 			end
@@ -103,9 +109,10 @@ function CMD.send_client(lua_data)
 		handler_id_by_name[".msgservice"] = msgservice_id
 	end
 
-	local str_data = skynet.call(handler_id,"lua","PARES_GC",lua_data.protoid,lua_data)
+	local str_data = skynet.call(msgservice_id,"lua","PARES_GC",lua_data.protoid,lua_data)
 
-	if str_data ~= nil then
+	if str_data ~= "" then
+		print("[:'log']--['file':agent.lua]--['fun':send_client]",#str_data)
 		send_package(str_data)
 	else
 		print("[:'log']--['file':agent.lua]--['fun':send_client]","   str_data == nil")

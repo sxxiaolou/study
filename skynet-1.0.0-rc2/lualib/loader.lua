@@ -10,6 +10,7 @@ local main, pattern
 local err = {}
 for pat in string.gmatch(LUA_SERVICE, "([^;]+);*") do
 	local filename = string.gsub(pat, "?", SERVICE_NAME)
+	-- print("load filename:",filename)
 	local f, msg = loadfile(filename)
 	if not f then
 		table.insert(err, msg)
@@ -44,5 +45,6 @@ if LUA_PRELOAD then
 	f(table.unpack(args))
 	LUA_PRELOAD = nil
 end
+
 
 main(select(2, table.unpack(args)))

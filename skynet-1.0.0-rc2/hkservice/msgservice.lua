@@ -1,4 +1,6 @@
 local skynet = require "skynet"
+local hksend = require "hksend"
+-- local hksend = require "hksend"
 
 --优化 协议解析可以放到c中
 
@@ -68,20 +70,26 @@ end
 
 function read_int(msg_data,start_idx,key,len,limit)
 	local int_len = string.byte(msg_data,start_idx)
-	-- print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['int_len:']",int_len,#msg_data)
+	print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['int_len:']",int_len,#msg_data)
 	start_idx = start_idx + 1
 	local ret_int = 0
 	local read_len = 0
 	for i=1,int_len do
-		-- print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx)
+		print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx)
 		local int_value = string.byte(msg_data,start_idx)
-		-- print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['int_value:']",int_value)
+		print(string.char(int_value))
+		print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['int_value:']",int_value)
 		int_value = tonumber(int_value) << (read_len*8)
-		-- print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['int_value:']",int_value,#msg_data)
+		print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['int_value:']",int_value,#msg_data)
 		ret_int =  ret_int + int_value
 		read_len =  read_len + 1
 		start_idx = start_idx + 1
 	end
+
+	if ret_int > 2147483647 then
+		ret_int = ret_int - 4294967296
+	end
+
 	print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['ret_int:']",ret_int)
 	return ret_int,start_idx
 end
@@ -92,8 +100,57 @@ function CMD.PARES_GC(protoid,lua_data)
 	if proto_id_conf ~= nil then
 		protos = proto_by_module[proto_id_conf.module][proto_id_conf.name]
 	end
-	local proto_data = nil
+	local str_data = ""
+	if protos ~= nil then
+		hksend.hksend_start()
+		-- hksend.hkwrite_int(protoid)
+		for k,v in pairs(protos) do
+			local key = v[1]
+			local len = v[2]
+			local key_type = v[3]
+			local limit = v[4]
+			if limit == nil then
+				limit = 0
+			end
+			local str = ""
+			print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]",key,len,key_type,limit)
+			--to do 处理limit限制
+			if key_type == "string" then
+				write_string(lua_data,key,len,limit)
+			elseif key_type == "int" then
+				if len > 1 then
+					local int_array = lua_data[key]
+					local arr_len = #int_array
+					hksend.hkwrite_int(arr_len)
+					for i=1,arr_len do
+						if i > len then
+							print("[:'log']--['file':msgservice.lua]--['fun':PARES_CG]","int_array arr_len > len error")
+							break
+						end
+
+						local int_str
+						hksend.hkwrite_int(int_array[i])
+					end
+				else
+					hksend.hkwrite_int(lua_data[key])
+				end
+			else
+			end
+		end
+		str_data = hksend.hksend_end()
+	end
+	print(str_data)
+	CMD.PARES_CG(protoid,str_data)
+	return str_data
 end
+
+function write_string(lua_data,key,len,limit)
+	local str = lua_data[key]
+	local len = #str
+	hksend.hkwrite_int(len)
+	hksend.hkwrite_string(str,len)
+end
+
 
 skynet.start(function()
 	skynet.dispatch("lua", function(session, source, cmd, protoid, ...)
