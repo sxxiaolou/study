@@ -37,7 +37,8 @@ function CMD.PARES_CG(protoid,msg_data)
 			elseif key_type == "int" then
 				if len > 1 then
 					local int_array = {}
-					local arr_len,start_idx = read_int(msg_data,start_idx,key,len,limit)
+					local arr_len
+					arr_len,start_idx = read_int(msg_data,start_idx,key,len,limit)
 					for i=1,arr_len do
 						if i > len then
 							print("[:'log']--['file':msgservice.lua]--['fun':PARES_CG]","int_array arr_len > len error")
@@ -52,6 +53,24 @@ function CMD.PARES_CG(protoid,msg_data)
 				else
 					proto_data[key],start_idx = read_int(msg_data,start_idx,key,len,limit)
 				end
+			elseif key_type == "double" then
+				if len > 1 then
+					local int_double = {}
+					local arr_len,start_idx = read_int(msg_data,start_idx,key,len,limit)
+					for i=1,arr_len do
+						if i > len then
+							print("[:'log']--['file':msgservice.lua]--['fun':PARES_CG]","double_array arr_len > len error")
+							break
+						end
+
+						local double_value
+						double_value,start_idx = read_double(msg_data,start_idx,key,len,limit)
+						table.insert(int_double,i,double_value)
+					end
+					proto_data[key] = int_double
+				else
+					proto_data[key],start_idx = read_double(msg_data,start_idx,key,len,limit)
+				end
 			else
 			end
 		end
@@ -64,11 +83,11 @@ function read_string(msg_data,start_idx,key,len,limit)
 	-- print("[:'log']--['file':msgservice.lua]--['fun':read_string]","--['start_idx:']",start_idx,"--['len:']",len)
 	local ret_string = string.sub(msg_data,start_idx,start_idx+len-1)
 	start_idx = start_idx + len
-	print("[:'log']--['file':msgservice.lua]--['fun':read_string]","--['start_idx:']",start_idx,"--['ret_string:']",ret_string)
+	-- print("[:'log']--['file':msgservice.lua]--['fun':read_string]","--['start_idx:']",start_idx,"--['ret_string:']",ret_string)
 	return ret_string,start_idx
 end
 
-function read_int(msg_data,start_idx,key,len,limit)
+function read_int(msg_data,start_idx,key,len,limit,is_double)
 	local int_len = string.byte(msg_data,start_idx)
 	-- print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['int_len:']",int_len,#msg_data)
 	start_idx = start_idx + 1
@@ -86,12 +105,26 @@ function read_int(msg_data,start_idx,key,len,limit)
 		start_idx = start_idx + 1
 	end
 
-	if ret_int > 2147483647 then
+	if is_double == nil and ret_int > 2147483647 then
 		ret_int = ret_int - 4294967296
 	end
 
-	print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['ret_int:']",ret_int)
+	-- print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['ret_int:']",ret_int)
 	return ret_int,start_idx
+end
+
+function read_double(msg_data,start_idx,key,len,limit)
+	local ret_double
+	local high_uint
+	local low_uint
+	high_uint,start_idx = read_int(msg_data,start_idx,key,len,limit,true)
+	low_uint,start_idx = read_int(msg_data,start_idx,key,len,limit,true)
+	ret_double = ( high_uint << 32 ) + low_uint
+	if ret_double > 140737488355327 then
+		ret_double = ret_double - 281474976710656
+	end
+	-- print("[:'log']--['file':msgservice.lua]--['fun':read_double]","--['start_idx:']",start_idx,"--['ret_double:']",ret_double)
+	return ret_double,start_idx
 end
 
 function CMD.PARES_GC(protoid,lua_data)
@@ -215,8 +248,6 @@ end)
 
 function init_msgservice()
 	print("[:'log']--['file':msgservice.lua]--['fun':init_msgservice]")
-	local a = write_int(-2147483648)
-	print(a)
 	local proto_id_conf = require("common.protoid")
 	if proto_id_conf ~= nil then
 		for k,v in pairs(proto_id_conf) do

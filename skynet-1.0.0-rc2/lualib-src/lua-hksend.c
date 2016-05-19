@@ -14,7 +14,7 @@ _hkwrite_int(lua_State *L)
 {//-2147483648~2147483647
 	unsigned int int_value = luaL_checknumber(L,1);
 
-	printf("[:'log']--['file':%s]--['fun':%s]--['int_value':%u]\n","lua_hksend.c","_hkwrite_int",int_value);
+	// printf("[:'log']--['file':%s]--['fun':%s]--['int_value':%u]\n","lua_hksend.c","_hkwrite_int",int_value);
 	unsigned int int_byte = 0;
 	unsigned int int_arr[4];
 
@@ -34,7 +34,7 @@ _hkwrite_int(lua_State *L)
 
 		int_arr[int_byte] = v;
 		int_byte++;
-		printf("[:'log']--['file':%s]--['fun':%s]--['v':%d]--['int_byte':%d]\n","lua_hksend.c","_hkwrite_int",v,int_byte);
+		// printf("[:'log']--['file':%s]--['fun':%s]--['v':%d]--['int_byte':%d]\n","lua_hksend.c","_hkwrite_int",v,int_byte);
 		
 		if(is_break)
 		{
