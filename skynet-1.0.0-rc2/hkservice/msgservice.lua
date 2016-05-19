@@ -70,17 +70,17 @@ end
 
 function read_int(msg_data,start_idx,key,len,limit)
 	local int_len = string.byte(msg_data,start_idx)
-	print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['int_len:']",int_len,#msg_data)
+	-- print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['int_len:']",int_len,#msg_data)
 	start_idx = start_idx + 1
 	local ret_int = 0
 	local read_len = 0
 	for i=1,int_len do
-		print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx)
+		-- print("[:'log']-1-['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx)
 		local int_value = string.byte(msg_data,start_idx)
-		print(string.char(int_value))
-		print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['int_value:']",int_value)
+		-- print("[:'log']-2-['file':msgservice.lua]--['fun':read_int]--['char':]",string.char(int_value))
+		-- print("[:'log']-3-['file':msgservice.lua]--['fun':read_int]","--['int_value:']",int_value)
 		int_value = tonumber(int_value) << (read_len*8)
-		print("[:'log']--['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['int_value:']",int_value,#msg_data)
+		-- print("[:'log']-4-['file':msgservice.lua]--['fun':read_int]","--['start_idx:']",start_idx,"--['int_value:']",int_value,#msg_data)
 		ret_int =  ret_int + int_value
 		read_len =  read_len + 1
 		start_idx = start_idx + 1
@@ -102,8 +102,7 @@ function CMD.PARES_GC(protoid,lua_data)
 	end
 	local str_data = ""
 	if protos ~= nil then
-		hksend.hksend_start()
-		-- hksend.hkwrite_int(protoid)
+		str_data = str_data..write_int(protoid)
 		for k,v in pairs(protos) do
 			local key = v[1]
 			local len = v[2]
@@ -116,39 +115,92 @@ function CMD.PARES_GC(protoid,lua_data)
 			print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]",key,len,key_type,limit)
 			--to do 处理limit限制
 			if key_type == "string" then
-				write_string(lua_data,key,len,limit)
+				str_data = str_data..write_string(lua_data,key,len,limit)
 			elseif key_type == "int" then
 				if len > 1 then
 					local int_array = lua_data[key]
 					local arr_len = #int_array
-					hksend.hkwrite_int(arr_len)
+					str_data = str_data..write_int(arr_len)
 					for i=1,arr_len do
 						if i > len then
 							print("[:'log']--['file':msgservice.lua]--['fun':PARES_CG]","int_array arr_len > len error")
 							break
 						end
-
-						local int_str
-						hksend.hkwrite_int(int_array[i])
+						str_data = str_data..write_int(int_array[i])
 					end
 				else
-					hksend.hkwrite_int(lua_data[key])
+					str_data = str_data..write_int(lua_data[key])
 				end
 			else
 			end
 		end
-		str_data = hksend.hksend_end()
 	end
-	print(str_data)
-	CMD.PARES_CG(protoid,str_data)
 	return str_data
 end
 
 function write_string(lua_data,key,len,limit)
 	local str = lua_data[key]
-	local len = #str
-	hksend.hkwrite_int(len)
-	hksend.hkwrite_string(str,len)
+	local str_len = #str
+	local ret_str = ""
+	ret_str = ret_str..write_int(str_len)
+	ret_str = ret_str..str
+	return ret_str
+end
+
+function write_int(lua_data)
+	local ret_str = ""
+	local byte_char
+	local null_char
+	local v_1
+	local v_2
+	local v_3
+	local v_4
+	
+	byte_char,v_1,v_2,v_3,v_4,null_char = hksend.hkwrite_int(lua_data);
+	local int_byte = string.byte(byte_char,1)
+	local int_null = string.byte(null_char,1)
+	local idx = 0
+
+	-- print("[:'log']--['file':msgservice.lua]--['fun':write_int]",int_byte,v_1,v_2,v_3,v_4,int_null)
+	ret_str = ret_str..byte_char
+
+	if idx < int_byte then
+		if (int_null & 1) == 1 then
+			ret_str = ret_str.."\0"
+		else
+			ret_str = ret_str..v_1
+		end
+		idx = idx+1
+	end
+
+	if idx < int_byte then
+		if (int_null & 2) ==2 then
+			ret_str = ret_str.."\0"
+		else
+			ret_str = ret_str..v_2
+		end
+		idx = idx+1
+	end
+
+	if idx < int_byte then
+		if (int_null & 4) == 4 then
+			ret_str = ret_str.."\0"
+		else
+			ret_str = ret_str..v_3
+		end
+		idx = idx+1
+	end
+
+	if idx < int_byte then
+		if (int_null & 8) == 8 then
+			ret_str = ret_str.."\0"
+		else
+			ret_str = ret_str..v_4
+		end
+		idx = idx+1
+	end
+
+	return ret_str
 end
 
 
@@ -163,6 +215,8 @@ end)
 
 function init_msgservice()
 	print("[:'log']--['file':msgservice.lua]--['fun':init_msgservice]")
+	local a = write_int(-2147483648)
+	print(a)
 	local proto_id_conf = require("common.protoid")
 	if proto_id_conf ~= nil then
 		for k,v in pairs(proto_id_conf) do

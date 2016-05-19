@@ -9,30 +9,6 @@
 
 #include "skynet.h"
 
-char buf_write[65535];
-int write_start = 0;
-
-static int
-_hksend_start(lua_State *L)
-{
-	printf("[:'log']--['file':%s]--['fun':%s]\n","lua_hksend.c","_hksend_start");
-	memset(buf_write,0,sizeof(char)*65535);
-	write_start = 0;
-	return 0;
-}
-
-static int
-_hksend_end(lua_State *L)
-{
-	printf("[:'log']--['file':%s]--['fun':%s]--['write_start':%d]\n","lua_hksend.c","_hksend_end",write_start);
-	// printf("[:'log']--['file':%s]--['fun':%s]--['buf_write':%s]\n","lua_hksend.c","_hksend_end",buf_write);
-	char ret_char[write_start];
-	memcpy(ret_char,buf_write,write_start);
-	// printf("[:'log']--['file':%s]--['fun':%s]--['ret_char':%s]\n","lua_hksend.c","_hksend_end",ret_char);
-	lua_pushstring(L,ret_char);
-	return 1;
-}
-
 static int
 _hkwrite_int(lua_State *L) 
 {//-2147483648~2147483647
@@ -65,37 +41,65 @@ _hkwrite_int(lua_State *L)
 			break;
 		}
 	}
-	memcpy(buf_write+write_start,&int_byte,1);
-	write_start++;
+
+	char int2char_byte[2];
+	memcpy(int2char_byte,&int_byte,1);
+	char char_0[2] = {'0'};
+	char char_1[2] = {'0'};
+	char char_2[2] = {'0'};
+	char char_3[2] = {'0'};
+	//记录空字符的位置
+	char char_null[2];
+	int kong = 128;
+	int flag = 1;
+
+
 
 	for(int i = 0;i<int_byte;i++)
 	{
 		// printf("[:'log']--['file':%s]--['fun':%s]--['int_arr[%d]':%d]--['int_byte':%d]\n","lua_hksend.c","_hkwrite_int",i,int_arr[i],int_byte);
 		if(int_arr[i]==0)
 		{
-			// memcpy(buf_write+write_start,&int_arr[i],1);
-			buf_write[write_start] = '$';
+			kong = kong | flag;
+			flag = flag << 1;
+			continue;
 			// printf("[:'log']--['file':%s]--['fun':%s]--['buf_write[%d]':%s]--['int_byte':%d]\n","lua_hksend.c","_hkwrite_int",write_start,buf_write[write_start],int_byte);
 		}
-		else
+
+		flag = flag << 1;
+		if(i==0)
 		{
-			memcpy(buf_write+write_start,&int_arr[i],1);
+			memcpy(char_0,&int_arr[i],1);
+			continue;
+		}
+		else if(i==1)
+		{
+			memcpy(char_1,&int_arr[i],1);
+			continue;
+		}
+		else if(i==2)
+		{
+			memcpy(char_2,&int_arr[i],1);
+			continue;
+		}
+		else if(i==3)
+		{
+			memcpy(char_3,&int_arr[i],1);
+			continue;
 		}
 		
-		write_start++;
 	}
-	return 0;
-}
 
-static int
-_hkwrite_string(lua_State *L) 
-{
-	const char *str_value = luaL_checkstring(L,1);
-	int str_len = luaL_checknumber(L,2);
-	printf("[:'log']--['file':%s]--['fun':%s]--['str_value':%s]--['str_len':%d]\n","lua_hksend.c","_hkwrite_string",str_value,str_len);
-	memcpy(buf_write+write_start,str_value,str_len);
-	write_start += str_len;
-	return 0;
+	memcpy(char_null,&kong,1);//"\0"位置
+
+	lua_pushstring(L,int2char_byte);
+	lua_pushstring(L,char_0);
+	lua_pushstring(L,char_1);
+	lua_pushstring(L,char_2);
+	lua_pushstring(L,char_3);
+	lua_pushstring(L,char_null);
+	// printf("[:'log']--['file':%s]--['fun':%s]--['char_0':%s]--['char_1':%s]--['char_2':%s]--['char_3':%s]\n","lua_hksend.c","_hkwrite_int",char_0,char_1,char_2,char_3);
+	return 6;
 }
 
 
@@ -104,10 +108,7 @@ luaopen_hksend(lua_State *L) {
 	luaL_checkversion(L);
 
 	luaL_Reg l[] = {
-		{ "hksend_start" , _hksend_start },
-		{ "hksend_end" , _hksend_end },
 		{ "hkwrite_int" , _hkwrite_int },
-		{ "hkwrite_string" , _hkwrite_string },
 		{ NULL, NULL },
 	};
 

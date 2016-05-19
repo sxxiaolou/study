@@ -86,12 +86,12 @@ function CMD.start(conf)
 	local gate = conf.gate
 	WATCHDOG = conf.watchdog
 
-	skynet.fork(function()
-		while true do
-			send_package("Welcome to skynet, I will send heartbeat every 5 sec.")
-			skynet.sleep(500)
-		end
-	end)
+	-- skynet.fork(function()
+	-- 	while true do
+	-- 		send_package("Welcome to skynet, I will send heartbeat every 5 sec.")
+	-- 		skynet.sleep(500)
+	-- 	end
+	-- end)
 
 	client_fd = fd
 	skynet.call(gate, "lua", "forward", fd)
