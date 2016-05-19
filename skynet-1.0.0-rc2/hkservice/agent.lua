@@ -73,6 +73,7 @@ skynet.register_protocol {
 				ret_data.x = -1
 				ret_data.y = -2147483648
 				ret_data.points = {10000,888888,99999,1000000,777777777,2147483647}
+				ret_data.testdouble = {140737488355328,-140737488355329,54887884878,1,-1,0}
 				CMD["send_client"](ret_data)
 			-- elseif then
 			-- else

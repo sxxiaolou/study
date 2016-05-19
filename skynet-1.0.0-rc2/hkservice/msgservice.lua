@@ -156,13 +156,28 @@ function CMD.PARES_GC(protoid,lua_data)
 					str_data = str_data..write_int(arr_len)
 					for i=1,arr_len do
 						if i > len then
-							print("[:'log']--['file':msgservice.lua]--['fun':PARES_CG]","int_array arr_len > len error")
+							print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]","int_array arr_len > len error")
 							break
 						end
 						str_data = str_data..write_int(int_array[i])
 					end
 				else
 					str_data = str_data..write_int(lua_data[key])
+				end
+			elseif key_type == "double" then
+				if len > 1 then
+					local int_double = lua_data[key]
+					local arr_len = #int_double
+					str_data = str_data..write_int(arr_len)
+					for i=1,arr_len do
+						if i > len then
+							print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]","double_array arr_len > len error")
+							break
+						end
+						str_data = str_data..write_double(int_double[i])
+					end
+				else
+					str_data = str_data..write_double(lua_data[key])
 				end
 			else
 			end
@@ -233,6 +248,28 @@ function write_int(lua_data)
 		idx = idx+1
 	end
 
+	return ret_str
+end
+
+DOUBLE_MAX = 140737488355327
+DOUBLE_MIN = -140737488355328
+function write_double(lua_data)
+	local ret_str = ""
+	if lua_data>DOUBLE_MAX then
+		lua_data = DOUBLE_MAX
+	elseif lua_data < DOUBLE_MIN then
+		lua_data = DOUBLE_MIN
+	end
+
+	local high_flag = 0x7fff
+	if lua_data < 0 then
+		lua_data = 281474976710655 + lua_data + 1
+		high_flag = high_flag | 0x8000
+	end
+	local low_uint = lua_data & 0xffffffff
+	local high_uint = lua_data >> 32
+	ret_str = ret_str..write_int(high_uint)
+	ret_str = ret_str..write_int(low_uint)
 	return ret_str
 end
 

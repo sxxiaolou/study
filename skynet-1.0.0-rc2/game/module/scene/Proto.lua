@@ -14,6 +14,7 @@ local proto = {
 		{"x", 1, "int"},
 		{"y", 1, "int"},
 		{"points", 128, "int"},
+		{"testdouble", 6, "double"},
 	}
 }
 
