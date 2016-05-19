@@ -3,8 +3,6 @@ local proto = {
 	{
 		{"account",1,"string"},
 		{"authkey",1,"string"},
-		{"testint",4,"int"},
-		{"testdouble",5,"double"}
 	},
 
 	GC_MOVE =

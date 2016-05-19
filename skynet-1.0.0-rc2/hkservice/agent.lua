@@ -11,6 +11,16 @@ local CMD = {}
 local REQUEST = {}
 local client_fd
 local handler_id_by_name = handler_id_by_name or {}
+local has_login = false --已经登录
+
+function get_handler_id_by_name(name)
+	local handler_id = handler_id_by_name[name]
+	if handler_id == nil then
+		handler_id = skynet.localname(name)
+		handler_id_by_name[name] = handler_id
+	end
+	return handler_id
+end
 
 function REQUEST:get()
 	print("get", self.what)
@@ -57,27 +67,33 @@ skynet.register_protocol {
 		local protoid = tonumber(protoid_high) << 8 | protoid_low
 		local msgdata = string.sub(res_msg,3,size)
 		print("[:'log']--['file':agent.lua]--['fun':client dispatch]--['protoid:']",protoid,#msgdata)
-		local handler_id = handler_id_by_name[".msgservice"]
-		if handler_id == nil then
-			handler_id = skynet.localname(".msgservice")
-			handler_id_by_name[".msgservice"] = handler_id
-		end
+		local handler_id = get_handler_id_by_name(".msgservice")
 		print("[:'log']--['file':agent.lua]--['fun':client dispatch]--['handler_id:']",handler_id)
+		--解析数据
 		local lua_data = skynet.call(handler_id,"lua","PARES_CG",protoid,msgdata)
 		if lua_data ~= nil then
-			if lua_data.service == ".agent" then
-				local ret_data = {}
-				ret_data.protoid = 590
-				ret_data.account = "skynet"
-				ret_data.obj_id = 0
-				ret_data.x = -1
-				ret_data.y = -2147483648
-				ret_data.points = {10000,888888,99999,1000000,777777777,2147483647}
-				ret_data.testdouble = {140737488355328,-140737488355329,54887884878,1,-1,0}
-				CMD["send_client"](ret_data)
-			-- elseif then
-			-- else
+			if has_login ~= true then
+				if lua_data.service == ".watchdog" then
+					handler_id = get_handler_id_by_name(lua_data.service)
+					skynet.send(handler_id,"lua",lua_data.service_fun,lua_data)
+				else
+					print("plese login game!")
+					return
+				end
 			end
+
+			-- if lua_data.service == ".agent" then
+			-- 	local ret_data = {}
+			-- 	ret_data.protoid = 590
+			-- 	ret_data.account = "skynet"
+			-- 	ret_data.obj_id = 0
+			-- 	ret_data.x = -1
+			-- 	ret_data.y = -2147483648
+			-- 	ret_data.points = {10000,888888,99999,1000000,777777777,2147483647}
+			-- 	ret_data.testdouble = {140737488355328,-140737488355329,54887884878,1,-1,0}
+			-- 	CMD["send_client"](ret_data)
+			
+			-- end
 		end
 	end
 }

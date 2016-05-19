@@ -1,6 +1,8 @@
 local skynet = require "skynet"
 local netpack = require "netpack"
+local scene_handler = require "module.scene.Handler"
 
+local HKCMD = {}
 local CMD = {}
 local SOCKET = {}
 local gate
@@ -55,11 +57,18 @@ skynet.start(function()
 			local f = SOCKET[subcmd]
 			f(...)
 			-- socket api don't need return
+		elseif HKCMD[cmd] then
+			HKCMD[cmd](subcmd,...)
 		else
 			local f = assert(CMD[cmd])
 			skynet.ret(skynet.pack(f(subcmd, ...)))
 		end
 	end)
-
 	gate = skynet.newservice("gate")
 end)
+
+----------------------hk_start------------------------------------
+function HKCMD.CG_ASK_LOGIN(lua_data)
+	print("CG_ASK_LOGIN")
+end
+----------------------hk_end--------------------------------------

@@ -5,7 +5,7 @@ protoid=protoid or {}
 protoid[590] = {name="GC_MOVE",service="",module="scene"}
 
 --start_1024_C2G
-protoid[1029] = {name="CG_ASK_LOGIN",service=".agent",module="scene"}
+protoid[1029] = {name="CG_ASK_LOGIN",service=".watchdog",module="scene"}
 
 
 return protoid

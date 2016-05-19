@@ -9,6 +9,8 @@ skynet.start(function()
 	skynet.newservice("debug_console",8000)
 	skynet.newservice("simpledb")
 	local watchdog = skynet.newservice("watchdog")
+	skynet.name(".watchdog", watchdog)
+	
 	skynet.call(watchdog, "lua", "start", {
 		port = 2016,
 		address="172.22.28.2",
