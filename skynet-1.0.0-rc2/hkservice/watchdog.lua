@@ -1,6 +1,11 @@
 local skynet = require "skynet"
 local netpack = require "netpack"
-local scene_handler = require "module.scene.Handler"
+
+--------------------hankai_start------------------------
+local SceneHandler = require "module.scene.Handler"
+local AuthCheck = require "module.scene.AuthCheck"
+local CommonDefine = require "common.CommonDefine"
+--------------------hankai_end-------------------------
 
 local HKCMD = {}
 local CMD = {}
@@ -64,11 +69,33 @@ skynet.start(function()
 			skynet.ret(skynet.pack(f(subcmd, ...)))
 		end
 	end)
-	gate = skynet.newservice("gate")
+	gate = skynet.newservice("hkgate")
 end)
 
 ----------------------hk_start------------------------------------
 function HKCMD.CG_ASK_LOGIN(lua_data)
-	print("CG_ASK_LOGIN")
+	skynet.error("CG_ASK_LOGIN account: " .. lua_data.account, "client_fd:"..lua_data.client_fd)
+	
+	local onlienCnt = 0
+
+	for k in pairs(agent) do
+		onlienCnt = onlienCnt + 1
+	end
+
+	if onlienCnt > CommonDefine.MAX_ONLINE_COUNT then
+		skynet.error("max online count ")
+		--to do 发送断线消息
+		close_agent(lua_data.client_fd)
+		return
+	end
+
+	local account = lua_data.account
+	local authkey = lua_data.authkey
+	local retAuth = AuthCheck.AuthCheck(account,authkey)
+	if retAuth ~= true then
+		--to do 发送认证失败消息
+		return
+	end
+	skynet.error("LOGIN success !")
 end
 ----------------------hk_end--------------------------------------

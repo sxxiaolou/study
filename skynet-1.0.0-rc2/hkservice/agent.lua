@@ -72,10 +72,15 @@ skynet.register_protocol {
 		--解析数据
 		local lua_data = skynet.call(handler_id,"lua","PARES_CG",protoid,msgdata)
 		if lua_data ~= nil then
+			--lua_data.service
+			--lua_data.service_fun
+			--lua_data.client_fd 客户端连接
+			--lua_data.agent
+			lua_data.client_fd = client_fd
+			lua_data.agent = skynet.self()
 			if has_login ~= true then
 				if lua_data.service == ".watchdog" then
-					handler_id = get_handler_id_by_name(lua_data.service)
-					skynet.send(handler_id,"lua",lua_data.service_fun,lua_data)
+					skynet.send(WATCHDOG,"lua",lua_data.service_fun,lua_data)
 				else
 					print("plese login game!")
 					return
