@@ -7,7 +7,10 @@ skynet.start(function()
 	print("Server start")
 	local console = skynet.newservice("console")
 	skynet.newservice("debug_console",8000)
-	skynet.newservice("simpledb")
+
+	local dbservice = skynet.newservice("dbservice")
+	skynet.name(".dbservice", dbservice)
+
 	local watchdog = skynet.newservice("watchdog")
 	skynet.name(".watchdog", watchdog)
 	

@@ -2,7 +2,9 @@ local skynet = require "skynet"
 local netpack = require "netpack"
 local socket = require "socket"
 
+--------------------hankai_start------------------------
 
+--------------------hankai_end-------------------------
 
 local WATCHDOG
 local host
@@ -140,6 +142,18 @@ function CMD.send_client(lua_data)
 		print("[:'log']--['file':agent.lua]--['fun':send_client]","   str_data == nil")
 	end
 end
+
+------------------------------hankai_start----------------------------------------
+function CMD.create_human(lua_data)
+	print("[:'log']--['file':agent.lua]--['fun':create_human] start")
+	local human = {}
+	human.client_fd = lua_data.client_fd
+	human.id = lua_data.human_id
+	-- human.db = 
+
+	print("[:'log']--['file':agent.lua]--['fun':create_human] end")
+end
+------------------------------hankai_end-----------------------------------------
 
 skynet.start(function()
 	skynet.dispatch("lua", function(_,_, command, ...)

@@ -5,6 +5,7 @@ local netpack = require "netpack"
 local SceneHandler = require "module.scene.Handler"
 local AuthCheck = require "module.scene.AuthCheck"
 local CommonDefine = require "common.CommonDefine"
+local Human = require "core.Human"
 --------------------hankai_end-------------------------
 
 local HKCMD = {}
@@ -73,6 +74,8 @@ skynet.start(function()
 end)
 
 ----------------------hk_start------------------------------------
+
+
 function HKCMD.CG_ASK_LOGIN(lua_data)
 	skynet.error("CG_ASK_LOGIN account: " .. lua_data.account, "client_fd:"..lua_data.client_fd)
 	
@@ -91,11 +94,20 @@ function HKCMD.CG_ASK_LOGIN(lua_data)
 
 	local account = lua_data.account
 	local authkey = lua_data.authkey
+	local client_fd = lua_data.client_fd
+
 	local retAuth = AuthCheck.AuthCheck(account,authkey)
 	if retAuth ~= true then
 		--to do 发送认证失败消息
 		return
 	end
+
+	lua_data.human_id = Human.id
+	Human.id = Human.id + 1
+
+	Human.id = 5000
+	print(Human.id)
+	local human = skynet.call(lua_data.agent,"lua","create_human",lua_data)
 	skynet.error("LOGIN success !")
 end
 ----------------------hk_end--------------------------------------
