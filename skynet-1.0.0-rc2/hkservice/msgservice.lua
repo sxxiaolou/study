@@ -83,7 +83,7 @@ function read_string(msg_data,start_idx,key,len,limit)
 	-- print("[:'log']--['file':msgservice.lua]--['fun':read_string]","--['start_idx:']",start_idx,"--['len:']",len)
 	local ret_string = string.sub(msg_data,start_idx,start_idx+len-1)
 	start_idx = start_idx + len
-	print("[:'log']--['file':msgservice.lua]--['fun':read_string]","--['start_idx:']",start_idx,"--['ret_string:']",ret_string)
+	-- print("[:'log']--['file':msgservice.lua]--['fun':read_string]","--['start_idx:']",start_idx,"--['ret_string:']",ret_string)
 	return ret_string,start_idx
 end
 

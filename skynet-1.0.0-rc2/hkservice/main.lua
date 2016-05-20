@@ -1,7 +1,7 @@
 local skynet = require "skynet.manager"
 
 
-local max_client = 64
+local max_client = 5000
 
 skynet.start(function()
 	print("Server start")

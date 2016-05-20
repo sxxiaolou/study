@@ -1,4 +1,5 @@
 protoid=protoid or {}
+--auther hankai
 --service service_fun 不可以做关键字
 
 --start_1_G2C
