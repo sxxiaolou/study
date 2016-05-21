@@ -12,8 +12,9 @@ local host
 local CMD = {}
 local REQUEST = {}
 local client_fd
-local handler_id_by_name = handler_id_by_name or {}
-local has_login = false --已经登录
+local handler_id_by_name = handler_id_by_name or {}                      --所有服务id
+local has_login = false                                                                          --已经登录
+local db_data = nil --
 
 function get_handler_id_by_name(name)
 	local handler_id = handler_id_by_name[name]
@@ -123,6 +124,11 @@ end
 
 function CMD.disconnect()
 	-- todo: do something before exit
+
+	if has_login == true then
+		_update_db()
+	end
+
 	skynet.exit()
 end
 
@@ -150,11 +156,29 @@ function CMD.create_human(lua_data)
 	human.client_fd = lua_data.client_fd
 	human.id = lua_data.human_id
 
+	--玩家的数据
 	local handler_id = get_handler_id_by_name(".dbservice")
-	local db_data = skynet.call(handler_id,"lua","loadRole",lua_data)
+	db_data = skynet.call(handler_id,"lua","loadRole",lua_data)
+
+	if db_data ~= nil then
+		has_login = true
+	end
+
+	_human_db_data_init(db_data)
 	
 
 	print("[:'log']--['file':agent.lua]--['fun':create_human] end")
+end
+
+function _human_db_data_init(db_data)
+	--新增加的数据字段
+end
+
+function _update_db()
+	if db_data ~= nil then
+		local handler_id = get_handler_id_by_name(".dbservice")
+		skynet.send(handler_id,"lua","saveRole",db_data)
+	end
 end
 ------------------------------hankai_end-----------------------------------------
 

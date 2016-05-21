@@ -35,8 +35,14 @@ function CMD.loadRole(lua_data)
 		local ret = db[Config.DB_NAME].char:insert(data)
 		print("[:'log']--['file':dbservice.lua]--['fun':loadRole]","new role data._id:",data._id)
 	end
-	-- db[Config.DB_NAME].char:update({_id=data._id},data)
+
+	data.ip = lua_data.addr
 	return data
+end
+
+function CMD.saveRole(data)
+	print("[:'log']--['file':dbservice.lua]--['fun':saveRole]","!!!!!! success data._id:",data._id)
+	db[Config.DB_NAME].char:update({_id=data._id},data)
 end
 
 skynet.start(function()

@@ -11,11 +11,13 @@ local Human = require "core.Human"
 local HKCMD = {}
 local CMD = {}
 local SOCKET = {}
-local gate
-local agent = {}
+local gate                                                                        ---网关
+local agent = {}                                                                ---玩家
+local address = {}                                                             ---登录的ip
 
 function SOCKET.open(fd, addr)
 	skynet.error("New client from : " .. addr)
+	address[fd] = addr
 	agent[fd] = skynet.newservice("agent")
 	skynet.call(agent[fd], "lua", "start", { gate = gate, client = fd, watchdog = skynet.self() })
 end
@@ -23,6 +25,7 @@ end
 local function close_agent(fd)
 	local a = agent[fd]
 	agent[fd] = nil
+	address[fd] = nil
 	if a then
 		skynet.call(gate, "lua", "kick", fd)
 		-- disconnect never return
@@ -74,8 +77,6 @@ skynet.start(function()
 end)
 
 ----------------------hk_start------------------------------------
-
-
 function HKCMD.CG_ASK_LOGIN(lua_data)
 	skynet.error("CG_ASK_LOGIN account: " .. lua_data.account, "client_fd:"..lua_data.client_fd)
 	
@@ -103,6 +104,7 @@ function HKCMD.CG_ASK_LOGIN(lua_data)
 	end
 
 	lua_data.human_id = Human.id
+	lua_data.addr = address[lua_data.client_fd]
 	Human.id = Human.id + 1
 
 	local human = skynet.call(lua_data.agent,"lua","create_human",lua_data)
