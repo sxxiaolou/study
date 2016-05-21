@@ -105,8 +105,6 @@ function HKCMD.CG_ASK_LOGIN(lua_data)
 	lua_data.human_id = Human.id
 	Human.id = Human.id + 1
 
-	Human.id = 5000
-	print(Human.id)
 	local human = skynet.call(lua_data.agent,"lua","create_human",lua_data)
 	skynet.error("LOGIN success !")
 end

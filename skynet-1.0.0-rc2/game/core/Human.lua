@@ -1,9 +1,3 @@
-has_load = has_load or false
-
-if has_load then
-	return human
-end
-
 local human = {}
 
 human.onlineHumen = onlineHumen

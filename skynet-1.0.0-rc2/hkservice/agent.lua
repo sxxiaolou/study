@@ -149,7 +149,10 @@ function CMD.create_human(lua_data)
 	local human = {}
 	human.client_fd = lua_data.client_fd
 	human.id = lua_data.human_id
-	-- human.db = 
+
+	local handler_id = get_handler_id_by_name(".dbservice")
+	local db_data = skynet.call(handler_id,"lua","loadRole",lua_data)
+	
 
 	print("[:'log']--['file':agent.lua]--['fun':create_human] end")
 end
