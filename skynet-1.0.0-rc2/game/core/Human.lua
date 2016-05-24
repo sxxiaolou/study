@@ -1,8 +1,8 @@
 local human = {}
 
-human.onlineHumen = onlineHumen
-human.onlineAccout = onlineAccout
-human.onlineUuid = onlineUuid
+human.onlineHumen = {}
+human.onlineAccout = {}
+human.onlineCid = {}
 
 --人物的队列id
 human.id = 1

@@ -14,7 +14,7 @@ local REQUEST = {}
 local client_fd
 local handler_id_by_name = handler_id_by_name or {}                      --所有服务id
 local has_login = false                                                                          --已经登录
-local db_data = nil --
+local db_data = nil                                                                                 --玩家数据
 
 function get_handler_id_by_name(name)
 	local handler_id = handler_id_by_name[name]
@@ -165,9 +165,11 @@ function CMD.create_human(lua_data)
 	end
 
 	_human_db_data_init(db_data)
-	
 
+	human.db_data = db_data
+	
 	print("[:'log']--['file':agent.lua]--['fun':create_human] end")
+	return human
 end
 
 function _human_db_data_init(db_data)

@@ -110,6 +110,7 @@ function command.LAUNCHOK(address)
 	-- init notice
 	local response = instance[address]
 	if response then
+		print("[:'log']--['file':launcher.lua]--['fun':LAUNCHOK]--['self:']",address)
 		response(true, address)
 		instance[address] = nil
 	end

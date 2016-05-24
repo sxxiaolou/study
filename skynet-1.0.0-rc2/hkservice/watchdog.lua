@@ -78,7 +78,7 @@ end)
 
 ----------------------hk_start------------------------------------
 function HKCMD.CG_ASK_LOGIN(lua_data)
-	skynet.error("CG_ASK_LOGIN account: " .. lua_data.account, "client_fd:"..lua_data.client_fd)
+	print("CG_ASK_LOGIN account: " .. lua_data.account, " client_fd:"..lua_data.client_fd)
 	
 	local onlienCnt = 0
 
@@ -108,6 +108,10 @@ function HKCMD.CG_ASK_LOGIN(lua_data)
 	Human.id = Human.id + 1
 
 	local human = skynet.call(lua_data.agent,"lua","create_human",lua_data)
-	skynet.error("LOGIN success !")
+
+	Human.onlineHumen[human.db_data.account] = human
+	Human.onlineCid[human.db_data.cid] = human
+
+	print("LOGIN success !")
 end
 ----------------------hk_end--------------------------------------

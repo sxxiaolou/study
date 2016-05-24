@@ -1,5 +1,5 @@
 local skynet = require "skynet"
-local gateserver = require "core.hkgateserver"
+local gateserver = require "hkgateserver"
 local netpack = require "netpack"
 
 local watchdog
