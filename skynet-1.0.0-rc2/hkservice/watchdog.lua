@@ -14,6 +14,7 @@ local SOCKET = {}
 local gate                                                                        ---网关
 local agent = {}                                                                ---玩家
 local address = {}                                                             ---登录的ip
+local worldmgrservice                                                      ---世界
 
 function SOCKET.open(fd, addr)
 	skynet.error("New client from : " .. addr)
@@ -52,6 +53,7 @@ function SOCKET.data(fd, msg)
 end
 
 function CMD.start(conf)
+	worldmgrservice = conf.worldmgrservice
 	skynet.call(gate, "lua", "open" , conf)
 end
 
@@ -112,6 +114,7 @@ function HKCMD.CG_ASK_LOGIN(lua_data)
 	Human.onlineHumen[human.db_data.account] = human
 	Human.onlineCid[human.db_data.cid] = human
 
+	skynet.send(worldmgrservice,"lua","enterworld",human)
 	print("LOGIN success !")
 end
 ----------------------hk_end--------------------------------------

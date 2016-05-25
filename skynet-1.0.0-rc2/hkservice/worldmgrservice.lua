@@ -1,6 +1,7 @@
 local skynet = require "skynet"
 local CMD = {}
-local allworld = {}
+local _allWorld = {}
+local _allWorldCid2ClientFd = {}
 
 skynet.start(function()
 	skynet.dispatch("lua", function(session, source, cmd, protoid, ...)
@@ -16,5 +17,10 @@ end)
 
 function init_worldservice()
 	--这里可以做分线功能
-	allworld[1] = skynet.newservice("worldservice")
+	_allWorld[1] = skynet.newservice("worldservice")
+end
+
+function CMD.enterworld(human)
+	_allWorldCid2ClientFd[human.db_data.cid] = human.db_data.client_fd
+	skynet.send(_allWorld[1],"lua","enterworld",human)
 end

@@ -13,19 +13,21 @@ skynet.start(function()
 
 	local watchdog = skynet.newservice("watchdog")
 	skynet.name(".watchdog", watchdog)
+
+	local msgservice = skynet.newservice("msgservice")
+	skynet.name(".msgservice", msgservice)
+
+	local worldmgrservice = skynet.newservice("worldmgrservice")
+	skynet.name(".worldmgrservice", worldmgrservice)
 	
 	skynet.call(watchdog, "lua", "start", {
 		port = 2016,
 		address="172.22.28.2",
 		maxclient = max_client,
 		nodelay = true,
+		worldmgrservice = worldmgrservice,
 	})
 	print("Watchdog listen on ", 8888)
-	local msgservice = skynet.newservice("msgservice")
-	skynet.name(".msgservice", msgservice)
-
-	local worldmgrservice = skynet.newservice("worldmgrservice")
-	skynet.name(".worldmgrservice", worldmgrservice)
-
+	
 	skynet.exit()
 end)

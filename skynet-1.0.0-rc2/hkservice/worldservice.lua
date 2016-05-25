@@ -25,6 +25,11 @@ function init_allscene()
 		all_scene[scene_id].scene_conf = scene_conf
 		all_scene[scene_id].mapex_conf = MapEx[scene_id]
 		all_scene[scene_id].scene_service_id = skynet.newservice("sceneservice")
-		skynet.send(all_scene[scene_id].scene_service_id,"lua","initscene",all_scene[scene_id])
+		skynet.send(all_scene[scene_id].scene_service_id,"lua","initscene",scene_id,all_scene[scene_id])
 	end
+end
+
+function CMD.enterworld(human)
+	local scene = all_scene[human.db_data.scene_id]
+	skynet.send(scene.scene_service_id,"lua","enterscene",human)
 end
