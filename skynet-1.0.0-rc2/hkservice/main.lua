@@ -24,5 +24,8 @@ skynet.start(function()
 	local msgservice = skynet.newservice("msgservice")
 	skynet.name(".msgservice", msgservice)
 
+	local worldmgrservice = skynet.newservice("worldmgrservice")
+	skynet.name(".worldmgrservice", worldmgrservice)
+
 	skynet.exit()
 end)
