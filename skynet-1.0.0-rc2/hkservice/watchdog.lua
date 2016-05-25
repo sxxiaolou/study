@@ -27,6 +27,7 @@ local function close_agent(fd)
 	local a = agent[fd]
 	agent[fd] = nil
 	address[fd] = nil
+	Human.id = Human.id - 1
 	if a then
 		skynet.call(gate, "lua", "kick", fd)
 		-- disconnect never return
@@ -115,7 +116,8 @@ function HKCMD.CG_ASK_LOGIN(lua_data)
 	Human.onlineCid[human.db_data.cid] = human
 
 	skynet.send(worldmgrservice,"lua","enterworld",human)
-	--GC_ZZ_HUMAN_INFO
+
+	--GC_ZZ_HUMAN_INFO--start
 	local ret_data = {}
 	ret_data.protoid = 1
 	ret_data.id = human.id
@@ -125,6 +127,7 @@ function HKCMD.CG_ASK_LOGIN(lua_data)
 	end
 	ret_data.cid = human.db_data.cid
 	skynet.send(human.agent,"lua","send_client",ret_data)
+	--GC_ZZ_HUMAN_INFO--end-
 	
 	print("LOGIN success !")
 end

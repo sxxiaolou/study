@@ -8,6 +8,7 @@ local _w                                                                        
 local _h                                                                                ---场景高
 local _list_monster = {}                                                        ---怪物
 local _list_add_obj = nil                                                       ---其他显示对象
+local _iid = 0
 
 function _file2str(filename)
 	local f = io.open(filename,"rb")
@@ -33,6 +34,7 @@ end)
 function CMD.initscene(scene_id,conf)
 	_scene_id = scene_id
 	_conf = conf
+	_iid = 10000
 	print("[:'log']--['file':scene.lua]--['fun':lua initscene]",_conf.scene_conf.name)
 	local str = _file2str("map/".._conf.scene_conf.map_id..".map")
 	_w = math.ceil(_conf.mapex_conf.rect[-1][1][3]/25)
@@ -60,4 +62,14 @@ end
 
 function CMD.enterscene(human)
 	print("[:'log']--['file':scene.lua]--['fun':lua enterscene]",human.db_data.account)
+	--GC_ENTER_SCENE--start-
+	local ret_data = {}
+	ret_data.protoid = 430
+	ret_data.scene_id = _scene_id
+	ret_data.x = human.db_data.x
+	ret_data.y = human.db_data.y
+	ret_data.mapType = _conf.scene_conf.mapType
+	ret_data.iid = human.id
+	skynet.send(human.agent,"lua","send_client",ret_data)
+	--GC_ENTER_SCENE--end-
 end

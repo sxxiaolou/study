@@ -12,6 +12,15 @@ local proto = {
 		{"cid",1,"int"},
 	},
 
+	GC_ENTER_SCENE =
+	{
+		{"scene_id",1,"int"},
+		{"x",1,"int"},
+		{"y",1,"int"},
+		{"mapType",1,"int"},
+		{"iid",1,"int"},
+	},
+
 	GC_MOVE =
 	{
 		{"account",1,"string"},

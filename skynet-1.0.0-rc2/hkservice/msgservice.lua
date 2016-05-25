@@ -29,7 +29,7 @@ function CMD.PARES_CG(protoid,msg_data)
 			if limit == nil then
 				limit = 0
 			end
-			print("[:'log']--['file':msgservice.lua]--['fun':PARES_CG]",key,len,key_type,limit)
+			-- print("[:'log']--['file':msgservice.lua]--['fun':PARES_CG]",key,len,key_type,limit)
 			--to do 处理limit限制
 			if key_type == "string" then
 				proto_data[key],start_idx = read_string(msg_data,start_idx,key,len,limit)
@@ -144,7 +144,7 @@ function CMD.PARES_GC(protoid,lua_data)
 				limit = 0
 			end
 			local str = ""
-			print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]",key,len,key_type,limit)
+			-- print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]",key,len,key_type,limit)
 			--to do 处理limit限制
 			if key_type == "string" then
 				str_data = str_data..write_string(lua_data,key,len,limit)
