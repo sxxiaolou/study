@@ -155,6 +155,7 @@ function CMD.create_human(lua_data)
 	local human = {}
 	human.client_fd = lua_data.client_fd
 	human.id = lua_data.human_id
+	human.agent = skynet.self()
 
 	--玩家的数据
 	local handler_id = get_handler_id_by_name(".dbservice")
@@ -187,6 +188,9 @@ end
 skynet.start(function()
 	skynet.dispatch("lua", function(_,_, command, ...)
 		local f = CMD[command]
-		skynet.ret(skynet.pack(f(...)))
+		local ret_data = f(...)
+		if ret_data ~= nil then
+			skynet.ret(skynet.pack(ret_data))
+		end
 	end)
 end)

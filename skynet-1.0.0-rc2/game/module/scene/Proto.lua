@@ -5,6 +5,13 @@ local proto = {
 		{"authkey",1,"string"},
 	},
 
+	GC_ZZ_HUMAN_INFO =
+	{
+		{"id",1,"int"},
+		{"name",1,"string"},
+		{"cid",1,"int"},
+	},
+
 	GC_MOVE =
 	{
 		{"account",1,"string"},

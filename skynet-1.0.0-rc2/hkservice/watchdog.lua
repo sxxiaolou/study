@@ -115,6 +115,17 @@ function HKCMD.CG_ASK_LOGIN(lua_data)
 	Human.onlineCid[human.db_data.cid] = human
 
 	skynet.send(worldmgrservice,"lua","enterworld",human)
+	--GC_ZZ_HUMAN_INFO
+	local ret_data = {}
+	ret_data.protoid = 1
+	ret_data.id = human.id
+	ret_data.name = human.db_data.name
+	if(ret_data.name == "") then
+		ret_data.name = human.db_data.account
+	end
+	ret_data.cid = human.db_data.cid
+	skynet.send(human.agent,"lua","send_client",ret_data)
+	
 	print("LOGIN success !")
 end
 ----------------------hk_end--------------------------------------

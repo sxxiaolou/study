@@ -11,9 +11,9 @@ skynet.start(function()
 	skynet.dispatch("lua", function(session, source, cmd, protoid, ...)
 		print("[:'log']--['file':worldservice.lua]--['fun':lua dispatch]",session,source,cmd,protoid,...)
 		local f = assert(CMD[cmd])
-		local ret_data = skynet.pack(f(protoid, ...))
-		if ret ~= nil then
-			skynet.ret(ret_data)
+		local ret_data = f(protoid, ...)
+		if ret_data ~= nil then
+			skynet.ret(skynet.pack(ret_data))
 		end
 	end)
 	init_allscene()

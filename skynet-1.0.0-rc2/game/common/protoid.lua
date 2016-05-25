@@ -3,6 +3,7 @@ protoid=protoid or {}
 --service service_fun 不可以做关键字
 
 --start_1_G2C
+protoid[1] = {name="GC_ZZ_HUMAN_INFO",service="",module="scene"}
 protoid[590] = {name="GC_MOVE",service="",module="scene"}
 
 --start_1024_C2G
