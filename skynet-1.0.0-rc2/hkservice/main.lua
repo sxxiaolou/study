@@ -27,7 +27,10 @@ skynet.start(function()
 		nodelay = true,
 		worldmgrservice = worldmgrservice,
 	})
-	print("Watchdog listen on ", 8888)
+
+	local httpservice = skynet.newservice("httpservice")
+	
+	print("Watchdog listen on ", 2016)
 	
 	skynet.exit()
 end)
