@@ -102,6 +102,25 @@ _hkwrite_int(lua_State *L)
 	return 6;
 }
 
+static int 
+_hkcompress(lua_State *L)
+{
+	// size_t slen = 0;
+	// const char *text = lua_tolstring(L,1,&slen);
+	// slen = slen + 1;//字符串结尾'\0'
+
+	// unsigned long blen = compressBound(slen);
+
+	// char* buff = NULL;
+	// buff = (char*)skynet_malloc(blen);
+
+	// compress(buff,&blen,text,slen);
+	
+	// lua_pushstring(L,buff);
+
+	return 0;
+}
+
 
 int
 luaopen_hksend(lua_State *L) {
@@ -109,6 +128,7 @@ luaopen_hksend(lua_State *L) {
 
 	luaL_Reg l[] = {
 		{ "hkwrite_int" , _hkwrite_int },
+		{ "hkcompress" , _hkcompress },
 		{ NULL, NULL },
 	};
 

@@ -27,7 +27,7 @@ skynet.start(function()
 				if(cmd == "map") then
 					str = get_map_conf()
 				end
-				
+
 				local package = string.pack(">s2", str)
 				response(id, code,package)
 			end

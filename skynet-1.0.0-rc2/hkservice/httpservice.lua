@@ -8,7 +8,7 @@ local string = string
 
 skynet.start(function()
 	local agent = {}
-	for i= 1, 4 do
+	for i= 1, 1 do
 		agent[i] = skynet.newservice("httpagent")
 	end
 	local balance = 1
