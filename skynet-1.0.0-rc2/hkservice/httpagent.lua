@@ -8,6 +8,7 @@ local string = string
 local json = require "json"
 
 local sharedata = require "sharedata"
+local hksend = require "hksend"
 
 
 skynet.start(function()
@@ -23,12 +24,14 @@ skynet.start(function()
 			else
 				local package
 				local str
+				local compress_str
 				local cmd = string.sub(url,2)
 				if(cmd == "map") then
 					str = get_map_conf()
+					compress_str = hksend.hkcompress(str)
 				end
 
-				local package = string.pack(">s2", str)
+				local package = string.pack(">s2", compress_str)
 				response(id, code,package)
 			end
 		else
