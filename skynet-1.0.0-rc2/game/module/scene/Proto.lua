@@ -21,14 +21,11 @@ local proto = {
 		{"iid",1,"int"},
 	},
 
-	GC_MOVE =
+	GC_VIEW_STATUS_CHANGE = 
 	{
-		{"account",1,"string"},
-		{"obj_id", 1, "int"},
-		{"x", 1, "int"},
-		{"y", 1, "int"},
-		{"points", 128, "int"},
-		{"testdouble", 6, "double"},
+		{"iid",               1,          "int"},         --实体ID
+		{"status",              1,          "int"},         --状态
+		{"viewInfo",            1,          ViewInfo},      --可视数据
 	}
 }
 

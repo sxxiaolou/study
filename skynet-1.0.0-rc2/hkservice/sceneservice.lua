@@ -1,4 +1,5 @@
 local skynet = require "skynet"
+local scene_handler = require "module.scene.Handler"
 
 local CMD = {}
 local _scene_id
@@ -34,7 +35,7 @@ end)
 function CMD.initscene(scene_id,conf)
 	_scene_id = scene_id
 	_conf = conf
-	_iid = 10000
+	_iid = 10000 --默认10000之前是玩家
 	print("[:'log']--['file':scene.lua]--['fun':lua initscene]",_conf.scene_conf.name)
 	local str = _file2str("map/".._conf.scene_conf.map_id..".map")
 	_w = math.ceil(_conf.mapex_conf.rect[-1][1][3]/25)
@@ -72,4 +73,6 @@ function CMD.enterscene(human)
 	ret_data.iid = human.id
 	skynet.send(human.agent,"lua","send_client",ret_data)
 	--GC_ENTER_SCENE--end-
+
+	scene_handler.user_login(human)
 end
