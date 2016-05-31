@@ -30,6 +30,7 @@ local proto = {
 
 	ViewInfo = {
 		{"body",                        1,                      "int"},
+		{"bone",                        1,                      "int"},
 	}
 }
 
