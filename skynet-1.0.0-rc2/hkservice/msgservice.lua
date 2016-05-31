@@ -179,6 +179,86 @@ function CMD.PARES_GC(protoid,lua_data)
 					str_data = str_data..write_double(lua_data[key])
 				end
 			else
+				--模板
+				if len > 1 then
+					local tmep = lua_data[key]
+					local arr_len = #tmep 
+					str_data = str_data..write_int(arr_len)
+					for i=1,arr_len do
+						if i > len then
+							print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]","double_array arr_len > len error")
+							break
+						end
+						str_data = str_data..pares_gc_sub(proto_by_module[proto_id_conf.module][key_type],tmep[i])
+					end
+				else
+					str_data = str_data..pares_gc_sub(proto_by_module[proto_id_conf.module][key_type],lua_data[key])
+				end
+			end
+		end	
+	end
+	return str_data
+end
+
+function pares_gc_sub(protos,lua_data)
+	local str_data = ""
+	for k,v in pairs(protos) do
+		local key = v[1]
+		local len = v[2]
+		local key_type = v[3]
+		local limit = v[4]
+		if limit == nil then
+			limit = 0
+		end
+		local str = ""
+		-- print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]",key,len,key_type,limit)
+		--to do 处理limit限制
+		if key_type == "string" then
+			str_data = str_data..write_string(lua_data,key,len,limit)
+		elseif key_type == "int" then
+			if len > 1 then
+				local int_array = lua_data[key]
+				local arr_len = #int_array
+				str_data = str_data..write_int(arr_len)
+				for i=1,arr_len do
+					if i > len then
+						print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]","int_array arr_len > len error")
+						break
+					end
+					str_data = str_data..write_int(int_array[i])
+				end
+			else
+				str_data = str_data..write_int(lua_data[key])
+			end
+		elseif key_type == "double" then
+			if len > 1 then
+				local int_double = lua_data[key]
+				local arr_len = #int_double
+				str_data = str_data..write_int(arr_len)
+				for i=1,arr_len do
+					if i > len then
+						print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]","double_array arr_len > len error")
+						break
+					end
+					str_data = str_data..write_double(int_double[i])
+				end
+			else
+				str_data = str_data..write_double(lua_data[key])
+			end
+		else
+			if len > 1 then
+				local tmep = lua_data[key]
+				local arr_len = #tmep 
+				str_data = str_data..write_int(arr_len)
+				for i=1,arr_len do
+					if i > len then
+						print("[:'log']--['file':msgservice.lua]--['fun':PARES_GC]","double_array arr_len > len error")
+						break
+					end
+					str_data = str_data..pares_gc_sub(proto_by_module[proto_id_conf.module][key_type],tmep[i])
+				end
+			else
+				str_data = str_data..pares_gc_sub(proto_by_module[proto_id_conf.module][key_type],lua_data[key])
 			end
 		end
 	end

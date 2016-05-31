@@ -2,6 +2,7 @@ local skynet = require "skynet"
 local MapConf = require "confs.Map"
 local MapEx = require "core.MapEx"
 local sharedata = require "sharedata"
+local obj_config = require "common.ObjConfig"
 
 
 local CMD = {}
@@ -21,6 +22,8 @@ skynet.start(function()
 end)
 
 function init_allscene()
+	sharedata.new("MapEx",MapEx)
+	sharedata.new("MapConf",MapConf)
 	for scene_id,scene_conf in pairs(MapConf.scene) do
 		all_scene[scene_id] = {}
 		all_scene[scene_id].scene_conf = scene_conf
@@ -28,8 +31,6 @@ function init_allscene()
 		all_scene[scene_id].scene_service_id = skynet.newservice("sceneservice")
 		skynet.send(all_scene[scene_id].scene_service_id,"lua","initscene",scene_id,all_scene[scene_id])
 	end
-	sharedata.new("MapEx",MapEx)
-	sharedata.new("MapConf",MapConf)
 end
 
 function CMD.enterworld(human)

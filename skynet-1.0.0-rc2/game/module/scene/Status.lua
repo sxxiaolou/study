@@ -1,5 +1,6 @@
 local skynet = require "skynet"
 local status = {}
+local core_obj = require "core.Obj"
 
 HUMAN_STATUS_NORMAL             = 1	-- 正常状态
 HUMAN_STATUS_COLLECT            = 2	-- 采集状态
@@ -33,6 +34,7 @@ function status.send_view_status(obj)
 	ret_data.protoid = 740
 	ret_data.iid = obj.id
 	ret_data.status = HUMAN_STATUS_NORMAL
+	ret_data.viewinfo = core_obj.get_body_info(obj)
 	skynet.send(obj.agent,"lua","send_client",ret_data)
 	--GC_VIEW_STATUS_CHANGE--end-
 end

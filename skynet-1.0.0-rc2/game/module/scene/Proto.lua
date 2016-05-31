@@ -25,7 +25,11 @@ local proto = {
 	{
 		{"iid",               1,          "int"},         --实体ID
 		{"status",              1,          "int"},         --状态
-		{"viewInfo",            1,          ViewInfo},      --可视数据
+		{"viewinfo",            1,          "ViewInfo"},      --可视数据
+	},
+
+	ViewInfo = {
+		{"body",                        1,                      "int"},
 	}
 }
 

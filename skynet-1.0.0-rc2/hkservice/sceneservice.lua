@@ -1,5 +1,6 @@
 local skynet = require "skynet"
 local scene_handler = require "module.scene.Handler"
+local obj_conf = require "common.ObjConfig"
 
 local CMD = {}
 local _scene_id
@@ -10,6 +11,7 @@ local _h                                                                        
 local _list_monster = {}                                                        ---怪物
 local _list_add_obj = nil                                                       ---其他显示对象
 local _iid = 0
+local _all_objs = {}                                                                ---场景中所有显示对象
 
 function _file2str(filename)
 	local f = io.open(filename,"rb")
@@ -63,6 +65,9 @@ end
 
 function CMD.enterscene(human)
 	print("[:'log']--['file':scene.lua]--['fun':lua enterscene]",human.db_data.account)
+	human.obj_type = obj_conf.TYPE_HUMAN --玩家
+	_all_objs[human.id] = human
+
 	--GC_ENTER_SCENE--start-
 	local ret_data = {}
 	ret_data.protoid = 430
