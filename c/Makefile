@@ -43,9 +43,9 @@ o:	$(ALL_O)
 
 a:	$(ALL_A)
 
-
-$(ALL_T): $(ALL_O) $(ALL_A)
-	$(CC) $< -o $@ $(LDFLAGS) $(LIBS)
+	
+$(ALL_T): $(ALL_O)
+	$(CC) $@.c -o $@ $(LDFLAGS) $(LIBS)
 
 clean:
 	$(RM) $(ALL_T)
@@ -62,6 +62,7 @@ echo:
 	@echo "AR= $(AR)"
 	@echo "RANLIB= $(RANLIB)"
 	@echo "RM= $(RM)"
+
 
 # Convenience targets for popular platforms
 ALL= all
